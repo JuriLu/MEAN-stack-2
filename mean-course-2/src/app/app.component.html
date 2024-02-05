@@ -1,6 +1,6 @@
 <app-header></app-header>
 <main class="mt-2-custom">
-  <app-post-create ></app-post-create>
+  <app-post-create (postCreatedEvent)="onPostEdit($event)"></app-post-create>
   <mat-divider class="mb-1-custom"></mat-divider>
-  <app-post-list></app-post-list>
+  <app-post-list [postsInputResponse]="storedPosts"></app-post-list>
 </main>

@@ -1,9 +1,18 @@
 <mat-card>
   <mat-form-field>
-    <mat-label>Textarea</mat-label>
+    <mat-label>Title</mat-label>
+    <input
+      matInput
+      [(ngModel)]="enteredTitle"
+      [placeholder]="'Enter title'"
+      type="text">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Content</mat-label>
     <textarea
       matInput
-      [(ngModel)]="enteredValue"
+      [placeholder]="'Enter content'"
+      [(ngModel)]="enteredContent"
     ></textarea>
   </mat-form-field>
 <button

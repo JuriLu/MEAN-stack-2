@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { PostCreateComponent } from './post-create/post-create.component';
 import {FormsModule} from "@angular/forms";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {MatCard} from "@angular/material/card";
+import {MatCard, MatCardContent} from "@angular/material/card";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatButton} from "@angular/material/button";
@@ -23,21 +23,22 @@ import {MatDivider} from "@angular/material/divider";
     HeaderComponent,
     PostListComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    MatCard,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatButton,
-    MatToolbar,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatDivider
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        MatCard,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatButton,
+        MatToolbar,
+        MatAccordion,
+        MatExpansionPanel,
+        MatExpansionPanelHeader,
+        MatDivider,
+        MatCardContent
+    ],
   providers: [
     provideAnimationsAsync()
   ],

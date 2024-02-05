@@ -1,8 +1,18 @@
-<mat-accordion>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      Expansion Title
-    </mat-expansion-panel-header>
-    <p>Inside of an Expansion</p>
-  </mat-expansion-panel>
+@if (posts.length > 0){
+<mat-accordion [multi]="true">
+
+  @for (post of posts; track post.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        {{post.title}}
+      </mat-expansion-panel-header>
+      <p>{{post.content}}</p>
+    </mat-expansion-panel>
+  }
+
 </mat-accordion>
+} @else {
+  <mat-card>
+    <mat-card-content>No content addeed yet!</mat-card-content>
+  </mat-card>
+}
