@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c01775c2-1908-499d-b87a-58c029edd8ce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +64,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "develop",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -75,7 +73,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.start.executor": "Run",
     "npm.test.executor": "Run",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
     "ts.external.directory.path": "C:\\Users\\Admin\\WebstormProjects\\MEAN\\mean-course-2\\node_modules\\typescript\\lib"
   }
 }]]></component>
@@ -118,7 +116,8 @@
       <workItem from="1707135824011" duration="510000" />
       <workItem from="1707136346705" duration="302000" />
       <workItem from="1707136661926" duration="967000" />
-      <workItem from="1707137642744" duration="4423000" />
+      <workItem from="1707137642744" duration="4605000" />
+      <workItem from="1707147724578" duration="123000" />
     </task>
     <servers />
   </component>
@@ -141,7 +140,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
-      <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/mean-course-2" />
     </ignored-roots>
   </component>
