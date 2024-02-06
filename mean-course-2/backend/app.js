@@ -7,7 +7,6 @@ const Post = require('./models/post')
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://juriikub:7WRi6fFo5Pf9Adiv@mean-stack-cluster.8zzjpl8.mongodb.net/node-angular?retryWrites=true&w=majority";
 const clientOptions = {serverApi: {version: '1', strict: true, deprecationErrors: true}};
-
 async function run() {
   try {
     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
@@ -48,17 +47,26 @@ EXPRESS_APP.post("/api/posts", (
 })
 
 //? GET
-EXPRESS_APP.get('/api/posts',
-  (
-    request,
-    response,
-    next
-  ) => {
-    Post.find().then(documents => {
-      console.log(documents)
-      response.status(200).json(documents);
-    })
+EXPRESS_APP.get('/api/posts',(
+  request,
+  response,
+  next
+) => {
+  Post.find().then(documents => {
+    response.status(200).json(documents);
   })
+})
 
+//? DELETE
+EXPRESS_APP.delete('/api/posts/:id', (
+  request,
+  response,
+  next) => {
+  console.log(request.params.id)
+  Post.deleteOne({_id: request.params.id}).then(result => {
+    console.log(result)
+    response.status(200).json({message: "Post Deleted!"})
+  })
+})
 
 module.exports = EXPRESS_APP; //* WE NEED TO EXPORT , SO IT CAN BE USED AS A LISTENER TO server.js

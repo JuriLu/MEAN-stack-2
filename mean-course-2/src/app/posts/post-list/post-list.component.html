@@ -11,7 +11,11 @@
         <button mat-icon-button color="accent">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn">
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="onDelete(post.id)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </mat-action-row>

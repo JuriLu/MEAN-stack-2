@@ -3,12 +3,16 @@ import {Post} from "../interfaces/post.interface";
 import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
+const BASE_URI: string = 'http://localhost:3000'
+const POST_ENDPOINT: string = '/api/posts'
+
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
   private posts: Post[] = []
   private postsUpdated: Subject<Post[]> = new Subject<Post[]>()
+
 
   constructor(
     private http: HttpClient
@@ -34,16 +38,12 @@ export class PostsService {
       })
   }
 
-  getPostUpdateListener(): Observable<Post[]> {
-    return this.postsUpdated.asObservable()
-  }
-
   addPost(inPost: Partial<Post>): void {
     const post: Post = {
       title: inPost.title as string,
       content: inPost.content as string
     }
-    this.http.post<{ message: string }>('http://localhost:3000/api/posts', post).subscribe(
+    this.http.post<{ message: string }>(BASE_URI + POST_ENDPOINT, post).subscribe(
       (responseData: { message: string }): void => {
         console.log(responseData.message)
         this.posts.push(post)
@@ -52,4 +52,19 @@ export class PostsService {
     )
 
   }
+
+  deletePost(postId: string): void {
+    this.http.delete(`http://localhost:3000/api/posts/${postId}`)
+      .subscribe((): void => {
+          console.log('Deleted')
+          this.posts = this.posts.filter(post => post.id !== postId)
+        }
+      )
+  }
+
+  getPostUpdateListener(): Observable<Post[]> {
+    return this.postsUpdated.asObservable()
+  }
+
+
 }
