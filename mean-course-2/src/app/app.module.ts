@@ -21,6 +21,7 @@ import {MatDivider} from "@angular/material/divider";
 import {PostCreateComponent} from "./posts/post-create/post-create.component";
 import {PostListComponent} from "./posts/post-list/post-list.component";
 import {MatIcon} from "@angular/material/icon";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import {MatIcon} from "@angular/material/icon";
     MatExpansionPanelActionRow,
     MatIconButton,
     MatIcon,
-    MatCardTitle
+    MatCardTitle,
+    HttpClientModule
   ],
   providers: [
     provideAnimationsAsync()
