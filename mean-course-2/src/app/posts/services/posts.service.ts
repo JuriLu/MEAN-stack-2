@@ -7,9 +7,7 @@ import {HttpClient} from "@angular/common/http";
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: Post[] = [
-    {id: 1, title: 'First Post', content: `First's post Content`},
-  ]
+  private posts: Post[] = []
   private postsUpdated: Subject<Post[]> = new Subject<Post[]>()
 
   constructor(

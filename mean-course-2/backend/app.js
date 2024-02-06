@@ -4,21 +4,21 @@ const EXPRESS_APP = express() //* THIS WILL RETURN A EXPRESS APP  (This is a big
 const Post = require('./models/post')
 
 //? Mongoose library + Mongo Db connection
-  const mongoose = require('mongoose');
-  const uri = "mongodb+srv://juriikub:7WRi6fFo5Pf9Adiv@mean-stack-cluster.8zzjpl8.mongodb.net/node-angular?retryWrites=true&w=majority";
-  const clientOptions = {serverApi: {version: '1', strict: true, deprecationErrors: true}};
+const mongoose = require('mongoose');
+const uri = "mongodb+srv://juriikub:7WRi6fFo5Pf9Adiv@mean-stack-cluster.8zzjpl8.mongodb.net/node-angular?retryWrites=true&w=majority";
+const clientOptions = {serverApi: {version: '1', strict: true, deprecationErrors: true}};
 
-  async function run() {
-    try {
-      // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-      await mongoose.connect(uri, clientOptions);
-      await mongoose.connection.db.admin().command({ping: 1});
-      console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-    }
+async function run() {
+  try {
+    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+    await mongoose.connect(uri, clientOptions);
+    await mongoose.connection.db.admin().command({ping: 1});
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
   }
+}
 
-  run().catch(console.dir);
+run().catch(console.dir);
 //? Mongoose library + Mongo Db connection
 
 EXPRESS_APP.use(bodyParser.json())
@@ -54,30 +54,10 @@ EXPRESS_APP.get('/api/posts',
     response,
     next
   ) => {
-    const posts = [
-      {
-        id: 1,
-        get title() {
-          return `Server-Side-Post-${this.id}`
-        },
-        content: 'This is coming from Server'
-      },
-      {
-        id: 2,
-        get title() {
-          return `Server-Side-Post-${this.id}`
-        },
-        content: 'This is coming from Server'
-      },
-      {
-        id: 3,
-        get title() {
-          return `Server-Side-Post-${this.id}`
-        },
-        content: 'This is coming from Server'
-      },
-    ]
-    response.status(200).json(posts);
+    Post.find().then(documents => {
+      console.log(documents)
+      response.status(200).json(documents);
+    })
   })
 
 
