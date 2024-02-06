@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {Post} from "./post-list/post-list.component";
 
 @Component({
   selector: 'app-root',
@@ -7,14 +6,6 @@ import {Post} from "./post-list/post-list.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  storedPosts: Post[] = [
-    {id: 1, title: 'First Post', content: `First's post Content`},
-  ]
-
-  constructor() {
-  }
-  onPostEdit(post: Post): void {
-    this.storedPosts.push(post)
-  }
+  constructor() {}
 
 }
