@@ -13,12 +13,12 @@ export class PostCreateComponent implements OnInit {
     newPost!: string
     private mode = 'create'
     private postId!: string | null
-    post: any
+    post!: Post
 
     constructor(
         private postsService: PostsService,
         private route: ActivatedRoute,
-        private router:Router
+        private router: Router
     ) {
     }
 
@@ -27,7 +27,13 @@ export class PostCreateComponent implements OnInit {
                 if (paramMap.has('postId')) {
                     this.mode = 'edit'
                     this.postId = paramMap.get('postId') as string
-                    this.post = this.postsService.getPost(this.postId)
+                    this.postsService.getPost(this.postId).subscribe((responsePost: Post) => {
+                        this.post = {
+                            id: responsePost.id,
+                            title: responsePost.title,
+                            content: responsePost.content
+                        }
+                    })
                 } else {
                     this.mode = 'create'
                     this.postId = null

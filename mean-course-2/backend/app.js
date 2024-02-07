@@ -5,6 +5,7 @@ const Post = require('./models/post')
 
 //? Mongoose library + Mongo Db connection
 const mongoose = require('mongoose');
+const {response} = require("express");
 const uri = "mongodb+srv://juriikub:7WRi6fFo5Pf9Adiv@mean-stack-cluster.8zzjpl8.mongodb.net/node-angular?retryWrites=true&w=majority";
 const clientOptions = {serverApi: {version: '1', strict: true, deprecationErrors: true}};
 
@@ -49,6 +50,7 @@ EXPRESS_APP.post("/api/posts", (
     })
 })
 
+//? PUT
 EXPRESS_APP.put("/api/posts/:id", (request, response, next) => {
     const post = new Post({
         _id: request.body.id,
@@ -58,6 +60,17 @@ EXPRESS_APP.put("/api/posts/:id", (request, response, next) => {
     Post.updateOne({_id: request.params.id}, post).then(result => {
         console.log(result)
         response.status(200).json({message: 'Update Successful!'})
+    })
+})
+
+//? GET one element
+EXPRESS_APP.get("/api/posts/:id", (request, response, next) => {
+    Post.findById(request.params.id).then(post => {
+        if (post) {
+            response.status(200).json(post)
+        } else {
+            response.status(404).json({message: 'Post not found!'})
+        }
     })
 })
 

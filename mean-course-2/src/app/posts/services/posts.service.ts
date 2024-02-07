@@ -14,7 +14,6 @@ export class PostsService {
     private posts: Post[] = []
     private postsUpdated: Subject<Post[]> = new Subject<Post[]>()
 
-
     constructor(
         private http: HttpClient
     ) {
@@ -39,6 +38,10 @@ export class PostsService {
             })
     }
 
+    getPost(id: string): Observable<Post> {
+        return this.http.get<Post>(BASE_URI + POST_ENDPOINT + `/${id}`)
+    }
+
     addPost(inPost: Partial<Post>): void {
         const post: Post = {
             id: null,
@@ -53,10 +56,6 @@ export class PostsService {
             }
         )
 
-    }
-
-    getPost(id: string): Post {
-        return {...this.posts.find((post: Post): boolean => post.id === id)} as Post
     }
 
     updatePost(id: string, title: string, content: string): void {
@@ -83,6 +82,4 @@ export class PostsService {
     getPostUpdateListener(): Observable<Post[]> {
         return this.postsUpdated.asObservable()
     }
-
-
 }
