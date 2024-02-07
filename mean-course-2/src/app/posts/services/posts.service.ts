@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
 import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {PostResponseDto} from "../dto/postResponse.dto";
 
 const BASE_URI: string = 'http://localhost:3000'
 const POST_ENDPOINT: string = '/api/posts'
@@ -40,12 +41,13 @@ export class PostsService {
 
     addPost(inPost: Partial<Post>): void {
         const post: Post = {
+            id: null,
             title: inPost.title as string,
             content: inPost.content as string
         }
-        this.http.post<{ message: string }>(BASE_URI + POST_ENDPOINT, post).subscribe(
-            (responseData: { message: string }): void => {
-                console.log(responseData.message)
+        this.http.post<PostResponseDto>(BASE_URI + POST_ENDPOINT, post).subscribe(
+            (responseData: PostResponseDto): void => {
+                post.id = responseData.postId
                 this.posts.push(post)
                 this.postsUpdated.next([...this.posts])
             }
@@ -56,10 +58,8 @@ export class PostsService {
     deletePost(postId: string): void {
         this.http.delete(`http://localhost:3000/api/posts/${postId}`)
             .subscribe((): void => {
-                    const updatedPosts: Post[] = this.posts.filter(post => post.id !== postId)
-                    this.posts = updatedPosts
+                    this.posts = this.posts.filter(post => post.id !== postId)
                     this.postsUpdated.next([...this.posts])
-
                 }
             )
     }
