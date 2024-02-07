@@ -4,9 +4,10 @@
   @for (post of posts; track post.id) {
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <h3>{{post.title}}</h3>
+        <h3>TITLE: {{post.title}}</h3>
       </mat-expansion-panel-header>
-      <p>{{post.content}}</p>
+      <p>CONTENT: {{post.content}}</p>
+      <p>ID: {{post.id}}</p>
       <mat-action-row>
         <button mat-icon-button color="accent">
           <mat-icon>edit</mat-icon>
