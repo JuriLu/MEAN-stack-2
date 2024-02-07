@@ -26,7 +26,7 @@ EXPRESS_APP.use(bodyParser.urlencoded({extended: false})) //* XTRA FEATURE OF BO
 EXPRESS_APP.use((request, response, next) => {
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
     next()
 })
 
@@ -47,8 +47,18 @@ EXPRESS_APP.post("/api/posts", (
             postId: createdPost._id
         })
     })
+})
 
-
+EXPRESS_APP.put("/api/posts/:id", (request, response, next) => {
+    const post = new Post({
+        _id: request.body.id,
+        title: request.body.title,
+        content: request.body.content,
+    })
+    Post.updateOne({_id: request.params.id}, post).then(result => {
+        console.log(result)
+        response.status(200).json({message: 'Update Successful!'})
+    })
 })
 
 //? GET

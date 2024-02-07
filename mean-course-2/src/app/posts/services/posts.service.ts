@@ -55,8 +55,24 @@ export class PostsService {
 
     }
 
+    getPost(id: string): Post {
+        return {...this.posts.find((post: Post): boolean => post.id === id)} as Post
+    }
+
+    updatePost(id: string, title: string, content: string): void {
+        const post: Post = {id, title, content}
+        this.http.put(BASE_URI + POST_ENDPOINT + `/${id}`, post)
+            .subscribe(response => {
+                //? const updatedPosts = [...this.posts];
+                //? const oldPostIndex = updatedPosts.findIndex(p=>p.id === id)
+                //? updatedPosts[oldPostIndex] = post
+                //? this.posts = updatedPosts
+                //? this.postsUpdated.next([...this.posts])
+            })
+    }
+
     deletePost(postId: string): void {
-        this.http.delete(`http://localhost:3000/api/posts/${postId}`)
+        this.http.delete(BASE_URI + POST_ENDPOINT + `/${postId}`)
             .subscribe((): void => {
                     this.posts = this.posts.filter(post => post.id !== postId)
                     this.postsUpdated.next([...this.posts])

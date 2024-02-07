@@ -1,31 +1,31 @@
-@if (posts.length > 0){
-<mat-accordion [multi]="true">
+@if (posts.length > 0) {
+    <mat-accordion [multi]="true">
 
-  @for (post of posts; track post.id) {
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <h3>TITLE: {{post.title}}</h3>
-      </mat-expansion-panel-header>
-      <p>CONTENT: {{post.content}}</p>
-      <p>ID: {{post.id}}</p>
-      <mat-action-row>
-        <button mat-icon-button color="accent">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="onDelete(post.id)"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-action-row>
-    </mat-expansion-panel>
-  }
+        @for (post of posts; track post.id) {
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <h3>TITLE: {{ post.title }}</h3>
+                </mat-expansion-panel-header>
+                <p>CONTENT: {{ post.content }}</p>
+                <p>ID: {{ post.id }}</p>
+                <mat-action-row>
+                    <button mat-icon-button color="accent" [routerLink]="['/edit',post.id]">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                            mat-icon-button
+                            color="warn"
+                            (click)="onDelete(post.id)"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        }
 
-</mat-accordion>
+    </mat-accordion>
 } @else {
-  <mat-card>
-    <mat-card-content>No content addeed yet!</mat-card-content>
-  </mat-card>
+    <mat-card>
+        <mat-card-content>No content addeed yet!</mat-card-content>
+    </mat-card>
 }
