@@ -7,8 +7,12 @@ textarea {
   width: 100%;
 }
 
-input{
+input {
   border-radius: 2rem;
+}
+
+input[type='file'] {
+  visibility: hidden;
 }
 
 button[mat-raised-button] {
@@ -28,7 +32,7 @@ button[mat-fab] {
   flex: 1 1 auto
 }
 
-.btnGroup{
+.btnGroup {
   display: flex;
   justify-content: space-between;
   margin-right: 0.5rem;

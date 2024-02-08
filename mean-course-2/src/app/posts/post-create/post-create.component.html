@@ -1,41 +1,42 @@
 <mat-card>
   @if (!isLoading) {
-    <form (submit)="onSavePost(postForm)" #postForm="ngForm">
+    <form [formGroup]="form" (submit)="onSavePost()">
       <mat-form-field>
         <mat-label>Title</mat-label>
         <input
           matInput
-          [ngModel]="post ? post.title : ''"
           name="title"
+          [formControlName]="'title'"
           [placeholder]="'Enter title'"
-          required
-          #title="ngModel"
           type="text">
-        <mat-error *ngIf="title.invalid">{{ 'Enter a post title' }}</mat-error>
+        <mat-error *ngIf="form.get('title')?.invalid">{{ 'Enter a post title' }}</mat-error>
       </mat-form-field>
+      <input type="file" #filePicker>
       <mat-form-field>
         <mat-label>Content</mat-label>
         <textarea
           matInput
           [placeholder]="'Enter content'"
-          [ngModel]="post ? post.content : ''"
+          [formControlName]="'content'"
           rows="4"
-          required
-          #content="ngModel"
-
           name="content"
         ></textarea>
-        <mat-error *ngIf="content.invalid">{{ 'Enter a post content' }}</mat-error>
+        <mat-error *ngIf="form.get('content')?.invalid">{{ 'Enter a post content' }}</mat-error>
       </mat-form-field>
       <div class="btnGroup">
         <button
           mat-raised-button
           color="accent"
-          [disabled]="postForm.invalid"
+          [disabled]="false"
           type="submit"
         >Save Post
         </button>
-        <button mat-fab color="primary" aria-label="Upload Image">
+        <button
+          mat-fab
+          color="primary"
+          aria-label="Upload Image"
+          (click)="filePicker.click()"
+        >
           <mat-icon>upload</mat-icon>
         </button>
       </div>

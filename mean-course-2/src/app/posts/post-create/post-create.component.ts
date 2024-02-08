@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
-import {NgForm} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {PostsService} from "../services/posts.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 
@@ -11,7 +11,9 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 })
 export class PostCreateComponent implements OnInit {
   post!: Post
-  isLoading:boolean = false
+  isLoading: boolean = false
+
+  form!: FormGroup
   private mode = 'create'
   private postId!: string | null
 
@@ -23,39 +25,58 @@ export class PostCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.form = new FormGroup<any>({
+      title: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)]
+      }),
+      content: new FormControl(null, {
+        validators: [Validators.required]
+      }),
+    })
+
+
     this.route.paramMap.subscribe((paramMap: ParamMap): void => {
-        if (paramMap.has('postId')) {
-          this.mode = 'edit'
-          this.postId = paramMap.get('postId') as string
-          this.isLoading = true
-          this.postsService.getPost(this.postId).subscribe((responsePost: Post):void => {
-            this.isLoading = false
-            this.post = {
-              id: responsePost.id,
-              title: responsePost.title,
-              content: responsePost.content
-            }
+      if (paramMap.has('postId')) {
+        this.mode = 'edit'
+        this.postId = paramMap.get('postId') as string
+        this.isLoading = true
+
+        this.postsService.getPost(this.postId).subscribe((responsePost: Post): void => {
+          this.isLoading = false
+          this.post = {
+            id: responsePost.id,
+            title: responsePost.title,
+            content: responsePost.content
+          }
+
+          this.form.setValue({
+            title: this.post.title,
+            content: this.post.content
           })
-        } else {
-          this.mode = 'create'
-          this.postId = null
-        }
+
+        })
+      } else {
+        this.mode = 'create'
+        this.postId = null
       }
-    )
+    })
   }
 
-  onSavePost(form: NgForm): void {
-    if (form.invalid) {
+  onSavePost(): void {
+    if (this.form.invalid) {
       return;
     }
-    const createdPost: Post = {title: form.value.title, content: form.value.content}
+    const createdPost: Post = {
+      title: this.form.value.title,
+      content: this.form.value.content
+    }
     this.isLoading = true
     this.mode === "create" ?
       this.postsService.addPost(createdPost) :
       this.postsService.updatePost(this.postId as string, createdPost.title, createdPost.content)
 
     this.router.navigate(['../'])
-    form.resetForm()
+    this.form.reset()
   }
 
 
