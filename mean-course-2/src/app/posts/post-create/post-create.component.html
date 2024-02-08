@@ -11,7 +11,7 @@
           type="text">
         <mat-error *ngIf="form.get('title')?.invalid">{{ 'Enter a post title' }}</mat-error>
       </mat-form-field>
-      <input type="file" #filePicker>
+      <input type="file" #filePicker (change)="onImagePick($event)">
       <mat-form-field>
         <mat-label>Content</mat-label>
         <textarea

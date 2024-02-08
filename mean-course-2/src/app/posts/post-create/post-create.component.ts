@@ -32,6 +32,9 @@ export class PostCreateComponent implements OnInit {
       content: new FormControl(null, {
         validators: [Validators.required]
       }),
+      image: new FormControl(null, {
+        validators: [Validators.required]
+      }),
     })
 
 
@@ -77,6 +80,15 @@ export class PostCreateComponent implements OnInit {
 
     this.router.navigate(['../'])
     this.form.reset()
+  }
+
+  onImagePick(event: Event): void {
+    // @ts-ignore
+    const file: File = (event.target as HTMLInputElement).files[0]
+    this.form.patchValue({image: file})
+    this.form.get('image')?.updateValueAndValidity()
+    console.log(file)
+    console.log(this.form)
   }
 
 
