@@ -27,13 +27,18 @@
         ></textarea>
         <mat-error *ngIf="content.invalid">{{ 'Enter a post content' }}</mat-error>
       </mat-form-field>
-      <button
-        mat-raised-button
-        color="accent"
-        [disabled]="postForm.invalid"
-        type="submit"
-      >Save Post
-      </button>
+      <div class="btnGroup">
+        <button
+          mat-raised-button
+          color="accent"
+          [disabled]="postForm.invalid"
+          type="submit"
+        >Save Post
+        </button>
+        <button mat-fab color="primary" aria-label="Upload Image">
+          <mat-icon>upload</mat-icon>
+        </button>
+      </div>
     </form>
   } @else {
     <mat-spinner></mat-spinner>

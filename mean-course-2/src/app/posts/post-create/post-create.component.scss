@@ -1,11 +1,35 @@
+mat-card {
+  padding: 2rem;
+}
+
 mat-form-field,
-textarea{
+textarea {
   width: 100%;
 }
 
-button[mat-raised-button]{
+input{
+  border-radius: 2rem;
+}
+
+button[mat-raised-button] {
   width: 7rem;
   margin-left: .5rem;
   margin-bottom: .5rem;
 }
 
+button[mat-fab] {
+  width: 3rem;
+  height: 3rem;
+  margin-right: .5rem;
+  margin-bottom: .5rem;
+}
+
+.spacer {
+  flex: 1 1 auto
+}
+
+.btnGroup{
+  display: flex;
+  justify-content: space-between;
+  margin-right: 0.5rem;
+}
