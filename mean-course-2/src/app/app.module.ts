@@ -23,6 +23,9 @@ import {PostListComponent} from "./posts/post-list/post-list.component";
 import {MatIcon} from "@angular/material/icon";
 import {HttpClientModule} from "@angular/common/http";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {NgOptimizedImage} from "@angular/common";
+import {MessageService} from "primeng/api";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
   declarations: [
@@ -54,10 +57,13 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
     HttpClientModule,
     MatAnchor,
     MatProgressSpinner,
-    MatFabButton
+    MatFabButton,
+    NgOptimizedImage,
+    ToastModule
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

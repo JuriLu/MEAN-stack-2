@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
 import {PostsService} from "../services/posts.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
+import {mimeTypeValidator} from "./mime-type.validator";
+import {MessageService} from "primeng/api";
+
 
 @Component({
   selector: 'app-post-create',
@@ -12,6 +15,7 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 export class PostCreateComponent implements OnInit {
   post!: Post
   isLoading: boolean = false
+  imagePreview!: string
 
   form!: FormGroup
   private mode = 'create'
@@ -20,11 +24,14 @@ export class PostCreateComponent implements OnInit {
   constructor(
     private postsService: PostsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageService:MessageService
   ) {
   }
 
   ngOnInit(): void {
+    this.showError('test')
+
     this.form = new FormGroup<any>({
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
@@ -33,7 +40,8 @@ export class PostCreateComponent implements OnInit {
         validators: [Validators.required]
       }),
       image: new FormControl(null, {
-        validators: [Validators.required]
+        validators: [Validators.required],
+        asyncValidators: [mimeTypeValidator]
       }),
     })
 
@@ -63,6 +71,7 @@ export class PostCreateComponent implements OnInit {
         this.postId = null
       }
     })
+
   }
 
   onSavePost(): void {
@@ -77,7 +86,6 @@ export class PostCreateComponent implements OnInit {
     this.mode === "create" ?
       this.postsService.addPost(createdPost) :
       this.postsService.updatePost(this.postId as string, createdPost.title, createdPost.content)
-
     this.router.navigate(['../'])
     this.form.reset()
   }
@@ -87,8 +95,19 @@ export class PostCreateComponent implements OnInit {
     const file: File = (event.target as HTMLInputElement).files[0]
     this.form.patchValue({image: file})
     this.form.get('image')?.updateValueAndValidity()
-    console.log(file)
-    console.log(this.form)
+
+    const reader: FileReader = new FileReader()
+    reader.onload = (): void => {
+      this.imagePreview = reader.result as string
+      if (this.form.get('image')?.hasError('invalidMimeType')){
+        this.showError('test')
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  showError(msgContent:string):void {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: msgContent });
   }
 
 
