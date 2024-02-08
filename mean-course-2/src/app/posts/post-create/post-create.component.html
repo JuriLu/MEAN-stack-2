@@ -1,40 +1,42 @@
 <mat-card>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm">
-    <mat-form-field>
-      <mat-label>Title</mat-label>
-      <input
-        matInput
-        [ngModel]="post ? post.title : ''"
-        name="title"
-        [placeholder]="'Enter title'"
-        required
-        #title="ngModel"
-        type="text">
-      <mat-error *ngIf="title.invalid">{{'Enter a post title'}}</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Content</mat-label>
-      <textarea
-        matInput
-        [placeholder]="'Enter content'"
-        [ngModel]="post ? post.content : ''"
-        rows="4"
-        required
-        #content="ngModel"
+  @if (!isLoading) {
+    <form (submit)="onSavePost(postForm)" #postForm="ngForm">
+      <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input
+          matInput
+          [ngModel]="post ? post.title : ''"
+          name="title"
+          [placeholder]="'Enter title'"
+          required
+          #title="ngModel"
+          type="text">
+        <mat-error *ngIf="title.invalid">{{ 'Enter a post title' }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Content</mat-label>
+        <textarea
+          matInput
+          [placeholder]="'Enter content'"
+          [ngModel]="post ? post.content : ''"
+          rows="4"
+          required
+          #content="ngModel"
 
-        name="content"
-      ></textarea>
-      <mat-error *ngIf="content.invalid">{{'Enter a post content'}}</mat-error>
-    </mat-form-field>
-    <button
-      mat-raised-button
-      color="accent"
-      [disabled]="postForm.invalid"
-      type="submit"
-    >Save Post
-    </button>
-  </form>
+          name="content"
+        ></textarea>
+        <mat-error *ngIf="content.invalid">{{ 'Enter a post content' }}</mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="postForm.invalid"
+        type="submit"
+      >Save Post
+      </button>
+    </form>
+  } @else {
+    <mat-spinner></mat-spinner>
+  }
+
 </mat-card>
-
-
-<p>{{ newPost }}</p>

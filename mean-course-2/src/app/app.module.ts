@@ -22,6 +22,7 @@ import {PostCreateComponent} from "./posts/post-create/post-create.component";
 import {PostListComponent} from "./posts/post-list/post-list.component";
 import {MatIcon} from "@angular/material/icon";
 import {HttpClientModule} from "@angular/common/http";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import {HttpClientModule} from "@angular/common/http";
         MatIcon,
         MatCardTitle,
         HttpClientModule,
-        MatAnchor
+        MatAnchor,
+        MatProgressSpinner
     ],
   providers: [
     provideAnimationsAsync()
