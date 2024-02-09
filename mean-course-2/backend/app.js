@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const bodyParser = require("body-parser")
 const postsRoutes = require('./routes/postsRoute')
@@ -28,6 +29,7 @@ run().catch(console.dir);
 
 EXPRESS_APP.use(bodyParser.json())
 EXPRESS_APP.use(bodyParser.urlencoded({extended: false})) //* XTRA FEATURE OF BODY PARSER
+EXPRESS_APP.use("/images",express.static(path.join('backend/images')))
 EXPRESS_APP.use((request, response, next) => {
   response.setHeader("Access-Control-Allow-Origin", "*");
   response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
