@@ -12,6 +12,8 @@ npm-debug.log
 yarn-error.log
 ../.idea/
 
+/backend/images
+
 # IDEs and editors
 .idea/
 .project
