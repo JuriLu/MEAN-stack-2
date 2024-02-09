@@ -7,19 +7,25 @@ type frObsType = { [key: string]: any } | null
 //! If it return an object means it is NOT VALID (in this case its Async Validator so it will return Promise or Observable with that object)
 
 //* MIME TYPE: JPG JPEG PNG GIF ect , check only for images
-export const mimeTypeValidator = (control: AbstractControl): Promise<{ [key: string]: any }> | Observable<frObsType> => {
-  const file: File = control.value as File
+export const mimeTypeValidator = (control: AbstractControl<File>): Promise<{ [key: string]: any }> | Observable<frObsType> => {
+  const file: File = control.value
   const fileReader: FileReader = new FileReader()
   // * fileReader.onloadend = () => {} THIS CAN NOT BE USED HERE, BECAUSE ITS NOT ASYNC (NOT PROMISE OR OBSERVABLE) SO WE NEED TO CREATE AN OBSERVABLE FOR THIS CASE
 
-  const fileReaderObs:Observable<frObsType> = new Observable((observer: Observer<{ [key: string]: any } | null>): void => {
-    fileReader.addEventListener("loadend", (): void => {
+  return new Observable((observer: Observer<{
+    [key: string]: any
+  } | null>): void => {
+    fileReader.addEventListener(
+      "loadend",
+      (): void => {
       const array: Uint8Array = new Uint8Array(fileReader.result as ArrayBuffer).subarray(0, 4)
+        // console.log('Unit8Array',array)
       let header: string = ''
       let isValid: boolean = false
 
       for (let i: number = 0; i < array.length; i++) {
         header += array[i].toString(16)
+        // console.log(array[i] + ' ' + array[i].toString(16))
       }
 
       switch (header) {
@@ -44,6 +50,4 @@ export const mimeTypeValidator = (control: AbstractControl): Promise<{ [key: str
 
     fileReader.readAsArrayBuffer(file)
   })
-
-  return fileReaderObs
 }
