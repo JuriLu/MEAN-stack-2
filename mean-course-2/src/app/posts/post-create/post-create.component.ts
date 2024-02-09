@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
-import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {PostsService} from "../services/posts.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {mimeTypeValidator} from "./mime-type.validator";
@@ -25,13 +25,16 @@ export class PostCreateComponent implements OnInit {
     private postsService: PostsService,
     private route: ActivatedRoute,
     private router: Router,
-    private messageService:MessageService
+    private messageService: MessageService
   ) {
   }
 
   ngOnInit(): void {
-    this.showError('test')
+    this.definingForm()
+    this.definingCreateOrEditMode()
+  }
 
+  definingForm(): void {
     this.form = new FormGroup<any>({
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)]
@@ -44,8 +47,10 @@ export class PostCreateComponent implements OnInit {
         asyncValidators: [mimeTypeValidator]
       }),
     })
+  }
 
-
+  //TODO: Might turn into a Resolver
+  definingCreateOrEditMode(): void {
     this.route.paramMap.subscribe((paramMap: ParamMap): void => {
       if (paramMap.has('postId')) {
         this.mode = 'edit'
@@ -57,7 +62,10 @@ export class PostCreateComponent implements OnInit {
           this.post = {
             id: responsePost.id,
             title: responsePost.title,
-            content: responsePost.content
+            content: responsePost.content,
+            imagePath: ''
+
+            // image:responsePost.image
           }
 
           this.form.setValue({
@@ -78,36 +86,57 @@ export class PostCreateComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-    const createdPost: Post = {
-      title: this.form.value.title,
-      content: this.form.value.content
-    }
+
+    // const createdPost: Post = {
+    //   title: this.form.value.title,
+    //   content: this.form.value.content,
+    // }
+
     this.isLoading = true
     this.mode === "create" ?
-      this.postsService.addPost(createdPost) :
-      this.postsService.updatePost(this.postId as string, createdPost.title, createdPost.content)
+      this.postsService.addPost(
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image
+      ) :
+      this.postsService.updatePost(
+        this.postId as string,
+        this.form.value.title,
+        this.form.value.content
+      )
     this.router.navigate(['../'])
     this.form.reset()
   }
 
   onImagePick(event: Event): void {
-    // @ts-ignore
-    const file: File = (event.target as HTMLInputElement).files[0]
-    this.form.patchValue({image: file})
+    //* These const separation was made for best pracice and to remove TS type check errors
+    const imageFileList: FileList = (event.target as HTMLInputElement).files as FileList
+    const imageFile: File = imageFileList[0]
+
+    this.form.patchValue({image: imageFile})
     this.form.get('image')?.updateValueAndValidity()
 
-    const reader: FileReader = new FileReader()
-    reader.onload = (): void => {
-      this.imagePreview = reader.result as string
-      if (this.form.get('image')?.hasError('invalidMimeType')){
-        this.showError('test')
-      }
-    }
-    reader.readAsDataURL(file)
+    this.loadImagePreview(imageFile)
+
   }
 
-  showError(msgContent:string):void {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: msgContent });
+  loadImagePreview(imageFile: File): void {
+    //? onload event is fired when a file has been read successfully
+    const reader: FileReader = new FileReader()                   //! Initiates a file reader
+    reader.onload = (): void => {                                 //! Define what should happen when is done reading a file
+      this.imagePreview = reader.result as string
+      if (this.form.get('image')?.hasError('invalidMimeType')) {
+        this.showError(
+          'Uploaded file is not image format !',
+          'Please upload a JPG,JPEG or PNG file.'
+        )
+      }
+    }
+    reader.readAsDataURL(imageFile)                               //! Instruct to load that file
+  }
+
+  showError(msgError: string, msgContent: string): void {
+    this.messageService.add({severity: 'error', summary: msgError, detail: msgContent});
   }
 
 
