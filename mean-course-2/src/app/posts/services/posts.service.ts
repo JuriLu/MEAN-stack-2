@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
 import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {PostResponseDto} from "../dto/postResponse.dto";
 
 const BASE_URI: string = 'http://localhost:3000'
 const POST_ENDPOINT: string = '/api/posts'
@@ -20,14 +19,15 @@ export class PostsService {
   }
 
   getPosts(): void {
-    this.http.get<Post[]>('http://localhost:3000/api/posts')
+    this.http.get<Post[]>(BASE_URI + POST_ENDPOINT)
       .pipe(
         map((postsData: Post[]) => {
           return postsData.map((post: any): Post => {
             return {
+              id: post._id as string,
               title: post.title as string,
               content: post.content as string,
-              id: post._id as string
+              imagePath: post.imagePath
             }
           })
         })
@@ -42,15 +42,21 @@ export class PostsService {
     return this.http.get<Post>(BASE_URI + POST_ENDPOINT + `/${id}`)
   }
 
-  addPost(inPost: Partial<Post>): void {
-    const post: Post = {
-      id: null,
-      title: inPost.title as string,
-      content: inPost.content as string
-    }
-    this.http.post<PostResponseDto>(BASE_URI + POST_ENDPOINT, post).subscribe(
-      (responseData: PostResponseDto): void => {
-        post.id = responseData.postId
+  addPost(title:string,content:string, image: File): void {
+    const postData: FormData = new FormData()
+    postData.append('title', title)
+    postData.append('content', content)
+    postData.append('image', image, title)
+
+
+    this.http.post<any>(BASE_URI + POST_ENDPOINT, postData).subscribe(
+      (responseData: any): void => {
+        const post: Post = {
+          id: responseData._id as string,
+          title: title,
+          content: content,
+          imagePath: responseData.imagePath
+        }
         this.posts.push(post)
         this.postsUpdated.next([...this.posts])
       }
@@ -59,7 +65,7 @@ export class PostsService {
   }
 
   updatePost(id: string, title: string, content: string): void {
-    const post: Post = {id, title, content}
+    const post: Post = {id, title, content, imagePath: ''}
     this.http.put<{ message: string }>(BASE_URI + POST_ENDPOINT + `/${id}`, post)
       .subscribe(
         (response: { message: string }): void => {
