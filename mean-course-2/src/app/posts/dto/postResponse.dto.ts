@@ -1,7 +1,9 @@
 export class PostResponseDto {
-    constructor(
-        public message: string,
-        public postId: string
-    ) {
-    }
+  constructor(
+    public _id: string | any,
+    public title: string,
+    public content: string,
+    public imagePath: string,
+  ) {
+  }
 }
