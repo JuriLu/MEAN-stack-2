@@ -42,7 +42,7 @@ export class PostsService {
     return this.http.get<Post>(BASE_URI + POST_ENDPOINT + `/${id}`)
   }
 
-  addPost(title:string,content:string, image: File): void {
+  addPost(title: string, content: string, image: File): void {
     const postData: FormData = new FormData()
     postData.append('title', title)
     postData.append('content', content)
@@ -64,12 +64,37 @@ export class PostsService {
 
   }
 
-  updatePost(id: string, title: string, content: string): void {
-    const post: Post = {id, title, content, imagePath: ''}
-    this.http.put<{ message: string }>(BASE_URI + POST_ENDPOINT + `/${id}`, post)
+  updatePost(
+    id: string,
+    title: string,
+    content: string,
+    image: File | string
+    ): void {
+    let postData: FormData | Post;
+    if (typeof image === 'object') {
+      postData = new FormData()
+      postData.append('id', id)
+      postData.append('title', title)
+      postData.append('content', content)
+      postData.append('image', image, title)
+    } else {
+      postData = {id:id, title, content, imagePath: image}
+    }
+
+    this.http.put(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
       .subscribe(
-        (response: { message: string }): void => {
-          this.reloadUpdatedPost(post, id)
+        (response: any): void => {
+          const updatedPosts: Post[] = [...this.posts];
+          const oldPostIndex: number = updatedPosts.findIndex((p: Post): boolean => p.id === id)
+          const post: Post = {
+            id,
+            title,
+            content,
+            imagePath: response.imagePath,
+          }
+          updatedPosts[oldPostIndex] = post
+          this.posts = updatedPosts
+          this.postsUpdated.next([...this.posts])
         })
   }
 

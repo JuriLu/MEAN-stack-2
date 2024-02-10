@@ -63,14 +63,13 @@ export class PostCreateComponent implements OnInit {
             id: responsePost.id,
             title: responsePost.title,
             content: responsePost.content,
-            imagePath: ''
-
-            // image:responsePost.image
+            imagePath: responsePost.imagePath
           }
 
           this.form.setValue({
             title: this.post.title,
-            content: this.post.content
+            content: this.post.content,
+            image:this.post.imagePath
           })
 
         })
@@ -94,7 +93,7 @@ export class PostCreateComponent implements OnInit {
 
     this.isLoading = true
     this.mode === "create" ?
-      this.postsService.addPost(
+      this.postsService.  addPost(
         this.form.value.title,
         this.form.value.content,
         this.form.value.image
@@ -102,7 +101,8 @@ export class PostCreateComponent implements OnInit {
       this.postsService.updatePost(
         this.postId as string,
         this.form.value.title,
-        this.form.value.content
+        this.form.value.content,
+        this.form.value.image
       )
     this.router.navigate(['../'])
     this.form.reset()
