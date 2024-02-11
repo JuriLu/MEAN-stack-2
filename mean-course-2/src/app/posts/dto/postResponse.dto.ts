@@ -4,6 +4,7 @@ export class PostResponseDto {
     public title: string,
     public content: string,
     public imagePath: string,
+    public __v?: number,
   ) {
   }
 }
