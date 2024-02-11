@@ -18,8 +18,8 @@ import {
   MatExpansionPanelHeader
 } from "@angular/material/expansion";
 import {MatDivider} from "@angular/material/divider";
-import {PostCreateComponent} from "./posts/post-create/post-create.component";
-import {PostListComponent} from "./posts/post-list/post-list.component";
+import {PostCreateComponent} from "./posts/components/post-create/post-create.component";
+import {PostListComponent} from "./posts/components/post-list/post-list.component";
 import {MatIcon} from "@angular/material/icon";
 import {HttpClientModule} from "@angular/common/http";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";

@@ -1,13 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {Post} from "../interfaces/post.interface";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {PostsService} from "../services/posts.service";
+import {PostsService} from "../../services/posts.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {mimeTypeValidator} from "./mime-type.validator";
 import {MessageService} from "primeng/api";
-import {PostFormInterface} from "../interfaces/postForm.interface";
-import {CreateModeEnum} from "../enums/createMode.enum";
-import {CreateModeType} from "../types/createMode.type";
+import {PostFormInterface} from "../../interfaces/postForm.interface";
+import {CreateModeEnum} from "../../enums/createMode.enum";
+import {CreateModeType} from "../../types/createMode.type";
+import {PostModel} from "../../models/post.model";
+import {PostResponseDto} from "../../dto/postResponse.dto";
 
 
 @Component({
@@ -16,7 +17,7 @@ import {CreateModeType} from "../types/createMode.type";
   styleUrl: './post-create.component.scss'
 })
 export class PostCreateComponent implements OnInit {
-  post!: Post
+  post!: PostModel
   isLoading: boolean = false
   imagePreview!: string
 
@@ -64,7 +65,7 @@ export class PostCreateComponent implements OnInit {
         this.postId = paramMap.get('postId') as string
         this.isLoading = true
 
-        this.postsService.getPost(this.postId).subscribe((responsePost: Post): void => {
+        this.postsService.getPost(this.postId).subscribe((responsePost: PostResponseDto): void => {
           this.isLoading = false
           this.imagePreview = responsePost.imagePath
           this.form.setValue({
@@ -114,9 +115,8 @@ export class PostCreateComponent implements OnInit {
   }
 
   loadImagePreview(imageFile: File): void {
-    //? onload event is fired when a file has been read successfully
-    const reader: FileReader = new FileReader()                   //! Initiates a file reader
-    reader.onload = (): void => {                                 //! Define what should happen when is done reading a file
+    const reader: FileReader = new FileReader()
+    reader.onload = (): void => {
       this.imagePreview = reader.result as string
       if (this.form.get('image')?.hasError('invalidMimeType')) {
         this.showError(
@@ -125,7 +125,7 @@ export class PostCreateComponent implements OnInit {
         )
       }
     }
-    reader.readAsDataURL(imageFile)                               //! Instruct to load that file
+    reader.readAsDataURL(imageFile)
   }
 
   showError(msgError: string, msgContent: string): void {

@@ -1,7 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Post} from "../interfaces/post.interface";
-import {PostsService} from "../services/posts.service";
+import {Post} from "../../interfaces/post.interface";
+import {PostsService} from "../../services/posts.service";
 import {Subscription} from "rxjs";
+import {PostModel} from "../../models/post.model";
 
 @Component({
   selector: 'app-post-list',
@@ -10,7 +11,7 @@ import {Subscription} from "rxjs";
 })
 export class PostListComponent implements OnInit, OnDestroy {
 
-  posts: Post[] = []
+  posts: PostModel[] = []
   private postsSub!: Subscription
   isLoading: boolean = false
 
@@ -31,7 +32,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   getPostsAndUpdate(): void {
     this.postsService.getPosts()
     this.postsSub = this.postsService.getPostUpdateListener().subscribe(
-      (posts: Post[]): void => {
+      (posts: PostModel[]): void => {
         this.isLoading = false
         this.posts = posts
       }
