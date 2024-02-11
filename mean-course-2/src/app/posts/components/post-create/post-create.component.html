@@ -32,24 +32,23 @@
           type="submit"
         >Save Post
         </button>
-        <button
-          mat-fab
-          color="primary"
-          aria-label="Upload Image"
-          type="button"
-          (click)="filePicker.click()"
-        >
-          <mat-icon>upload</mat-icon>
-        </button>
-        <button
-          *ngIf="form.get('image')?.hasError('required')"
-          mat-raised-button
-          color="warn"
-          type="button"
-        >Image Required
-        </button>
+        <div class="btnAndValidator">
+          <div class="displayFlex" *ngIf="form.get('image')?.hasError('required')">
+            <mat-icon>upload</mat-icon>
+            <span>Image upload required</span>
+          </div>
+          <button
+            mat-fab
+            color="primary"
+            aria-label="Upload Image"
+            type="button"
+            (click)="filePicker.click()"
+          >
+            <mat-icon>upload</mat-icon>
+          </button>
+        </div>
       </div>
-      @if (imagePreview !== '' && imagePreview && form.get('image')?.valid) {
+      @if (showPreviewCheck(CreateModeEnum.CREATE) ) {
         <div class="image-preview">
           <img
             [src]="imagePreview"
@@ -58,11 +57,7 @@
             [height]="'200'"
           >
         </div>
-      } @else if (
-        Mode === CreateModeEnum.EDIT
-        && imagePreview !== ''
-        && imagePreview
-        ){
+      } @else if (showPreviewCheck(CreateModeEnum.EDIT)) {
         <div class="image-preview">
           <img
             [src]="imagePreview"

@@ -37,3 +37,16 @@ button[mat-fab] {
   justify-content: space-between;
   margin-right: 0.5rem;
 }
+
+.btnAndValidator {
+  display: flex;
+  justify-content: space-around;
+  gap:1rem
+}
+
+.displayFlex{
+  display: flex;
+  color:red;
+  justify-content: space-evenly;
+  align-items: center
+}

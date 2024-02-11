@@ -26,6 +26,7 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {NgOptimizedImage} from "@angular/common";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
+import {MatBadge} from "@angular/material/badge";
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {ToastModule} from "primeng/toast";
     MatProgressSpinner,
     MatFabButton,
     NgOptimizedImage,
-    ToastModule
+    ToastModule,
+    MatBadge
   ],
   providers: [
     provideAnimationsAsync(),

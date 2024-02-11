@@ -20,10 +20,14 @@ export class PostCreateComponent implements OnInit {
   post!: PostModel
   isLoading: boolean = false
   imagePreview!: string
+  fileType: boolean = false
 
   form!: FormGroup<PostFormInterface>
   private mode: CreateModeType = CreateModeEnum.CREATE
   private postId!: string | null
+
+  protected readonly CreateModeEnum = CreateModeEnum;
+
 
   constructor(
     private postsService: PostsService,
@@ -36,6 +40,7 @@ export class PostCreateComponent implements OnInit {
   ngOnInit(): void {
     this.definingCreateOrEditMode()
     this.definingForm()
+    this.checkFileTypeOnChange()
   }
 
   get Mode(): string {
@@ -123,9 +128,49 @@ export class PostCreateComponent implements OnInit {
           'Uploaded file is not image format !',
           'Please upload a JPG,JPEG or PNG file.'
         )
+        this.form.get('image')?.reset()
       }
     }
     reader.readAsDataURL(imageFile)
+  }
+
+  showPreviewCheck(type: string): boolean {
+    if (type === CreateModeEnum.EDIT) {
+      return !!(
+        this.imagePreview &&
+        this.imagePreview !== '' &&
+        this.Mode === CreateModeEnum.EDIT &&
+        this.fileType
+      )
+    } else {
+      return !!(
+        this.imagePreview &&
+        this.imagePreview !== '' &&
+        this.form.get('image')?.valid
+      )
+    }
+  }
+
+
+  checkFileTypeOnChange(): void {
+    this.form.get('image')?.valueChanges.subscribe((image: string | File | null): void => {
+        if (image instanceof File) {
+          (image.type.split('/')[0] === 'image') ? this.fileType = true : this.fileType = false
+        } else {
+          let imageType: string = image?.split('.')[1] as string
+          switch (imageType) {
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+              this.fileType = true
+              break
+            default:
+              this.fileType = false
+              break
+          }
+        }
+      }
+    )
   }
 
   showError(msgError: string, msgContent: string): void {
@@ -152,5 +197,4 @@ export class PostCreateComponent implements OnInit {
   }
 
 
-  protected readonly CreateModeEnum = CreateModeEnum;
 }
