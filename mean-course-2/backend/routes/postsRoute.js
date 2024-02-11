@@ -10,16 +10,14 @@ const MIME_TYPE_MAP = {
   'image/jpg': 'jpg',
 }
 
-//? Image management
 const storage = multer.diskStorage({
-  //? destination runs when multer saves a file
   destination: (request, file, callback) => {
     const isValid = MIME_TYPE_MAP[file.mimetype]
     let error = new Error("Invalid mime type")
     if (isValid) {
       error = null
     }
-    callback(error, "backend/images",)    //* 1st argument is if detected an error(null), 2nd is a string with the path where is will be stored (relative to server.js file)
+    callback(error, "backend/images",)
   },
   filename: (request, file, callback) => {
     const name = file.originalname.toLowerCase().split(' ').join('-')
@@ -28,7 +26,6 @@ const storage = multer.diskStorage({
   }
 })
 
-//? POST
 EXPRESS_APP_ROUTER.post('',
   multer({storage}).single('image'),
   (request, response, next) => {
@@ -55,14 +52,11 @@ EXPRESS_APP_ROUTER.post('',
 EXPRESS_APP_ROUTER.put('/:id',
   multer({storage}).single('image'),
   (request, response, next) => {
-    //* console.log('--UPDATE-- Request.file', request.file)
     let imagePath = request.body.imagePath;
     if (request.file) {
       const serverUrl = request.protocol + '://' + request.get('host')
       imagePath = serverUrl + '/images/' + request.file.filename
     }
-    //* console.log('--UPDATE-- ImagePath', imagePath)
-
     const post = new Post({
       _id: request.body.id,
       title: request.body.title,
@@ -70,10 +64,8 @@ EXPRESS_APP_ROUTER.put('/:id',
       imagePath: imagePath
     })
 
-    //* console.log('--UPDATE-- Post', post)
-    Post.updateOne({_id: request.params.id}, post).then(result => {
-      //** console.log('--UPDATE-- Result',result)
-      response.status(200).json({message: 'Update Successful!', imagePath: post.imagePath})
+    Post.updateOne({_id: request.params.id}, post).then(updatedPost => {
+      response.status(200).json({message: 'Update Successful!', post})
     })
   })
 
@@ -89,24 +81,15 @@ EXPRESS_APP_ROUTER.get('/:id', (request, response, next) => {
 })
 
 //? GET
-EXPRESS_APP_ROUTER.get('', (
-  request,
-  response,
-  next
-) => {
+EXPRESS_APP_ROUTER.get('', (request, response, next) => {
   Post.find().then(documents => {
     response.status(200).json(documents);
   })
 })
 
 //? DELETE
-EXPRESS_APP_ROUTER.delete('/:id', (
-  request,
-  response,
-  next) => {
-  console.log(request.params.id)
+EXPRESS_APP_ROUTER.delete('/:id', (request, response, next) => {
   Post.deleteOne({_id: request.params.id}).then(result => {
-    console.log(result)
     response.status(200).json({message: "Post Deleted!"})
   })
 })
