@@ -58,6 +58,19 @@
             [height]="'200'"
           >
         </div>
+      } @else if (
+        Mode === CreateModeEnum.EDIT
+        && imagePreview !== ''
+        && imagePreview
+        ){
+        <div class="image-preview">
+          <img
+            [src]="imagePreview"
+            [alt]="form.value.title"
+            [width]="'400'"
+            [height]="'200'"
+          >
+        </div>
       }
     </form>
   } @else {
