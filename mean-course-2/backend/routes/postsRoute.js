@@ -29,44 +29,39 @@ const storage = multer.diskStorage({
 })
 
 //? POST
-EXPRESS_APP_ROUTER.post('', multer({storage}).single('image'), (
-  request,
-  response,
-  next
-) => {
-  const serverUrl = request.protocol + '://' + request.get('host')
-  const post = new Post({
-    title: request.body.title,
-    content: request.body.content,
-    imagePath: serverUrl + '/images/' + request.file.filename
-  })
-  //! SAVES DATA TO DATABASE
-  post.save().then(createdPost => {
-    response.status(201).json({
-      message: 'Post added successfuly',
-      post: {
-        id: createdPost._id,
-        title: createdPost.title,
-        content: createdPost.content,
-        imagePath: createdPost.imagePath,
-      }
+EXPRESS_APP_ROUTER.post('',
+  multer({storage}).single('image'),
+  (request, response, next) => {
+    const serverUrl = request.protocol + '://' + request.get('host')
+    const post = new Post({
+      title: request.body.title,
+      content: request.body.content,
+      imagePath: serverUrl + '/images/' + request.file.filename
+    })
+    post.save().then(createdPost => {
+      response.status(201).json({
+        message: 'Post added successfuly',
+        post: {
+          id: createdPost._id,
+          title: createdPost.title,
+          content: createdPost.content,
+          imagePath: createdPost.imagePath
+        }
+      })
     })
   })
-})
 
 //? PUT
 EXPRESS_APP_ROUTER.put('/:id',
-  (
-    request,
-    response,
-    next) => {
-    console.log('--UPDATE-- Request.file', request.file)
+  multer({storage}).single('image'),
+  (request, response, next) => {
+    //* console.log('--UPDATE-- Request.file', request.file)
     let imagePath = request.body.imagePath;
     if (request.file) {
       const serverUrl = request.protocol + '://' + request.get('host')
       imagePath = serverUrl + '/images/' + request.file.filename
     }
-    console.log('--UPDATE-- ImagePath', imagePath)
+    //* console.log('--UPDATE-- ImagePath', imagePath)
 
     const post = new Post({
       _id: request.body.id,
@@ -75,10 +70,10 @@ EXPRESS_APP_ROUTER.put('/:id',
       imagePath: imagePath
     })
 
-    console.log('--UPDATE-- Post', post)
+    //* console.log('--UPDATE-- Post', post)
     Post.updateOne({_id: request.params.id}, post).then(result => {
-      console.log(result)
-      response.status(200).json({message: 'Update Successful!'})
+      //** console.log('--UPDATE-- Result',result)
+      response.status(200).json({message: 'Update Successful!', imagePath: post.imagePath})
     })
   })
 
