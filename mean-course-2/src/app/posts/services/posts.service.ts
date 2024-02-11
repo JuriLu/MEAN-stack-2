@@ -2,16 +2,23 @@ import {Injectable} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
 import {map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {PostResponseDto} from "../dto/postResponse.dto";
+import {PostModel} from "../models/post.model";
 
 const BASE_URI: string = 'http://localhost:3000'
 const POST_ENDPOINT: string = '/api/posts'
+
+interface ResponseModel {
+  message: string,
+  post: PostResponseDto
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: Post[] = []
-  private postsUpdated: Subject<Post[]> = new Subject<Post[]>()
+  private posts: PostModel[] = []
+  private postsUpdated: Subject<PostModel[]> = new Subject<PostModel[]>()
 
   constructor(
     private http: HttpClient
@@ -19,27 +26,26 @@ export class PostsService {
   }
 
   getPosts(): void {
-    this.http.get<Post[]>(BASE_URI + POST_ENDPOINT)
+    this.http.get<PostResponseDto[]>(BASE_URI + POST_ENDPOINT)
       .pipe(
-        map((postsData: Post[]) => {
-          return postsData.map((post: any): Post => {
+        map((postsData: PostResponseDto[]) => {
+          return postsData.map((post: PostResponseDto): PostModel => {
             return {
               id: post._id as string,
               title: post.title as string,
               content: post.content as string,
-              imagePath: post.imagePath
+              image: post.imagePath
             }
           })
         })
       )
-      .subscribe((postData: Post[]): void => {
-        this.posts = postData
-        this.postsUpdated.next([...this.posts])
+      .subscribe((postData: PostModel[]): void => {
+        this.postsUpdated.next([...postData])
       })
   }
 
-  getPost(id: string): Observable<Post> {
-    return this.http.get<Post>(BASE_URI + POST_ENDPOINT + `/${id}`)
+  getPost(id: string): Observable<PostResponseDto> {
+    return this.http.get<PostResponseDto>(BASE_URI + POST_ENDPOINT + `/${id}`)
   }
 
   addPost(title: string, content: string, image: File): void {
@@ -48,13 +54,13 @@ export class PostsService {
     postData.append('content', content)
     postData.append('image', image, title)
 
-    this.http.post<any>(BASE_URI + POST_ENDPOINT, postData).subscribe(
-      (responseData: { message: string, post: Post }): void => {
-        const post: Post = {
-          id: responseData.post.id,
+    this.http.post<ResponseModel>(BASE_URI + POST_ENDPOINT, postData).subscribe(
+      (responseData: ResponseModel): void => {
+        const post: PostModel = {
+          id: responseData.post._id,
           title: responseData.post.title,
           content: responseData.post.content,
-          imagePath: responseData.post.imagePath
+          image: responseData.post.imagePath
         }
         this.posts.push(post)
         this.postsUpdated.next([...this.posts])
@@ -69,7 +75,6 @@ export class PostsService {
     content: string,
     image: File | string
   ): void {
-    console.log('Service, updatePost() , image',image)
     let postData: FormData | Post;
     if (typeof image === 'object') {
       postData = new FormData()
@@ -81,44 +86,36 @@ export class PostsService {
       postData = {id, title, content, imagePath: image}
     }
 
-    this.http.put<{ message: string,imagePath:any }>(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
+    this.http.put<ResponseModel>(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
       .subscribe(
-        (response: { message: string ,imagePath:any}): void => {
-          const updatedPosts: Post[] = [...this.posts];
-          const oldPostIndex: number = updatedPosts.findIndex((p: Post): boolean => p.id === id)
-          updatedPosts[oldPostIndex] = {
-            id: id,
-            title: title,
-            content: content,
-            imagePath: response.imagePath,
-          }
-          this.posts = updatedPosts
-          this.postsUpdated.next([...this.posts])        })
+        (response: ResponseModel): void => {
+          this.reloadUpdatedPost(response.post, id)
+        })
   }
 
-  reloadUpdatedPost(postData: Post, id: string): void {
-    const updatedPosts: Post[] = [...this.posts];
-    const oldPostIndex: number = updatedPosts.findIndex((p: Post): boolean => p.id === id)
-    updatedPosts[oldPostIndex] = {
-      id: postData.id,
-      title: postData.title,
-      content: postData.content,
-      imagePath: postData.imagePath,
+  reloadUpdatedPost(postResponseDto: PostResponseDto, id: string): void {
+    const toBeUpdatedPosts: PostModel[] = [...this.posts];
+    const oldPostIndex: number = toBeUpdatedPosts.findIndex((p: PostModel): boolean => p.id === id)
+    toBeUpdatedPosts[oldPostIndex] = {
+      id: postResponseDto._id,
+      title: postResponseDto.title,
+      content: postResponseDto.content,
+      image: postResponseDto.imagePath,
     }
-    this.posts = updatedPosts
+    this.posts = toBeUpdatedPosts
     this.postsUpdated.next([...this.posts])
   }
 
   deletePost(postId: string): void {
     this.http.delete(BASE_URI + POST_ENDPOINT + `/${postId}`)
       .subscribe((): void => {
-          this.posts = this.posts.filter(post => post.id !== postId)
+          this.posts = this.posts.filter((post: PostModel): boolean => post.id !== postId)
           this.postsUpdated.next([...this.posts])
         }
       )
   }
 
-  getPostUpdateListener(): Observable<Post[]> {
+  getPostUpdateListener(): Observable<PostModel[]> {
     return this.postsUpdated.asObservable()
   }
 }

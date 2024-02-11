@@ -38,12 +38,7 @@ EXPRESS_APP_ROUTER.post('',
     post.save().then(createdPost => {
       response.status(201).json({
         message: 'Post added successfuly',
-        post: {
-          id: createdPost._id,
-          title: createdPost.title,
-          content: createdPost.content,
-          imagePath: createdPost.imagePath
-        }
+        post: createdPost
       })
     })
   })
