@@ -5,6 +5,9 @@ import {PostsService} from "../services/posts.service";
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import {mimeTypeValidator} from "./mime-type.validator";
 import {MessageService} from "primeng/api";
+import {PostFormInterface} from "../interfaces/postForm.interface";
+import {CreateModeEnum} from "../enums/createMode.enum";
+import {CreateModeType} from "../types/createMode.type";
 
 
 @Component({
@@ -17,8 +20,8 @@ export class PostCreateComponent implements OnInit {
   isLoading: boolean = false
   imagePreview!: string
 
-  form!: FormGroup
-  private mode = 'create'
+  form!: FormGroup<PostFormInterface>
+  private mode: CreateModeType = CreateModeEnum.CREATE
   private postId!: string | null
 
   constructor(
@@ -30,22 +33,26 @@ export class PostCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.definingForm()
     this.definingCreateOrEditMode()
+    this.definingForm()
+  }
+
+  get Mode(): string {
+    return this.mode
   }
 
   definingForm(): void {
-    this.form = new FormGroup<any>({
-      title: new FormControl(null, {
+    this.form = new FormGroup<PostFormInterface>({
+      title: new FormControl<string | null>(null, {
         validators: [Validators.required, Validators.minLength(3)]
       }),
-      content: new FormControl(null, {
+      content: new FormControl<string | null>(null, {
         validators: [Validators.required]
       }),
-      image: new FormControl(null, {
+      image: new FormControl<File | string | null>(null, {
         validators: [Validators.required],
         asyncValidators: [mimeTypeValidator]
-      }),
+      })
     })
   }
 
@@ -53,28 +60,21 @@ export class PostCreateComponent implements OnInit {
   definingCreateOrEditMode(): void {
     this.route.paramMap.subscribe((paramMap: ParamMap): void => {
       if (paramMap.has('postId')) {
-        this.mode = 'edit'
+        this.mode = CreateModeEnum.EDIT
         this.postId = paramMap.get('postId') as string
         this.isLoading = true
 
         this.postsService.getPost(this.postId).subscribe((responsePost: Post): void => {
           this.isLoading = false
-          this.post = {
-            id: responsePost.id,
+          this.imagePreview = responsePost.imagePath
+          this.form.setValue({
             title: responsePost.title,
             content: responsePost.content,
-            imagePath: responsePost.imagePath
-          }
-
-          this.form.setValue({
-            title: this.post.title,
-            content: this.post.content,
-            image:this.post.imagePath
+            image: responsePost.imagePath
           })
-
         })
       } else {
-        this.mode = 'create'
+        this.mode = CreateModeEnum.CREATE
         this.postId = null
       }
     })
@@ -86,38 +86,31 @@ export class PostCreateComponent implements OnInit {
       return;
     }
 
-    // const createdPost: Post = {
-    //   title: this.form.value.title,
-    //   content: this.form.value.content,
-    // }
-
     this.isLoading = true
-    this.mode === "create" ?
-      this.postsService.  addPost(
-        this.form.value.title,
-        this.form.value.content,
-        this.form.value.image
+
+    this.mode === CreateModeEnum.CREATE ?
+      this.postsService.addPost(
+        this.form.value.title as string,
+        this.form.value.content as string,
+        this.form.value.image as File
       ) :
       this.postsService.updatePost(
         this.postId as string,
-        this.form.value.title,
-        this.form.value.content,
-        this.form.value.image
+        this.form.value.title as string,
+        this.form.value.content as string,
+        this.form.value.image as File | string
       )
     this.router.navigate(['../'])
     this.form.reset()
   }
 
   onImagePick(event: Event): void {
-    //* These const separation was made for best pracice and to remove TS type check errors
+    //* These consts separation was made for best pracice and to remove TS type check errors
     const imageFileList: FileList = (event.target as HTMLInputElement).files as FileList
     const imageFile: File = imageFileList[0]
-
     this.form.patchValue({image: imageFile})
     this.form.get('image')?.updateValueAndValidity()
-
     this.loadImagePreview(imageFile)
-
   }
 
   loadImagePreview(imageFile: File): void {
@@ -139,5 +132,25 @@ export class PostCreateComponent implements OnInit {
     this.messageService.add({severity: 'error', summary: msgError, detail: msgContent});
   }
 
+  postAndUpdateWithLogs(): void {
+    if (this.mode === CreateModeEnum.CREATE) {
+      console.log('Image Form from CREATE', this.form.value.image)
+      this.postsService.addPost(
+        this.form.value.title as string,
+        this.form.value.content as string,
+        this.form.value.image as File
+      )
+    } else {
+      console.log('Image Form from EDIT', this.form.value.image)
+      this.postsService.updatePost(
+        this.postId as string,
+        this.form.value.title as string,
+        this.form.value.content as string,
+        this.form.value.image as File
+      )
+    }
+  }
 
+
+  protected readonly CreateModeEnum = CreateModeEnum;
 }
