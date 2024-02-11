@@ -20,7 +20,7 @@ export class PostCreateComponent implements OnInit {
   post!: PostModel
   isLoading: boolean = false
   imagePreview!: string
-  fileType: boolean = false
+  isFileTypeImg: boolean = false
 
   form!: FormGroup<PostFormInterface>
   private mode: CreateModeType = CreateModeEnum.CREATE
@@ -91,9 +91,7 @@ export class PostCreateComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-
     this.isLoading = true
-
     this.mode === CreateModeEnum.CREATE ?
       this.postsService.addPost(
         this.form.value.title as string,
@@ -140,7 +138,7 @@ export class PostCreateComponent implements OnInit {
         this.imagePreview &&
         this.imagePreview !== '' &&
         this.Mode === CreateModeEnum.EDIT &&
-        this.fileType
+        this.isFileTypeImg
       )
     } else {
       return !!(
@@ -155,17 +153,17 @@ export class PostCreateComponent implements OnInit {
   checkFileTypeOnChange(): void {
     this.form.get('image')?.valueChanges.subscribe((image: string | File | null): void => {
         if (image instanceof File) {
-          (image.type.split('/')[0] === 'image') ? this.fileType = true : this.fileType = false
+          (image.type.split('/')[0] === 'image') ? this.isFileTypeImg = true : this.isFileTypeImg = false
         } else {
           let imageType: string = image?.split('.')[1] as string
           switch (imageType) {
             case 'jpg':
             case 'jpeg':
             case 'png':
-              this.fileType = true
+              this.isFileTypeImg = true
               break
             default:
-              this.fileType = false
+              this.isFileTypeImg = false
               break
           }
         }
