@@ -48,14 +48,13 @@ export class PostsService {
     postData.append('content', content)
     postData.append('image', image, title)
 
-
     this.http.post<any>(BASE_URI + POST_ENDPOINT, postData).subscribe(
-      (responseData: any): void => {
+      (responseData: { message: string, post: Post }): void => {
         const post: Post = {
-          id: responseData._id as string,
-          title: title,
-          content: content,
-          imagePath: responseData.imagePath
+          id: responseData.post.id,
+          title: responseData.post.title,
+          content: responseData.post.content,
+          imagePath: responseData.post.imagePath
         }
         this.posts.push(post)
         this.postsUpdated.next([...this.posts])
@@ -69,7 +68,8 @@ export class PostsService {
     title: string,
     content: string,
     image: File | string
-    ): void {
+  ): void {
+    console.log('Service, updatePost() , image',image)
     let postData: FormData | Post;
     if (typeof image === 'object') {
       postData = new FormData()
@@ -78,30 +78,33 @@ export class PostsService {
       postData.append('content', content)
       postData.append('image', image, title)
     } else {
-      postData = {id:id, title, content, imagePath: image}
+      postData = {id, title, content, imagePath: image}
     }
 
-    this.http.put(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
+    this.http.put<{ message: string,imagePath:any }>(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
       .subscribe(
-        (response: any): void => {
+        (response: { message: string ,imagePath:any}): void => {
           const updatedPosts: Post[] = [...this.posts];
           const oldPostIndex: number = updatedPosts.findIndex((p: Post): boolean => p.id === id)
-          const post: Post = {
-            id,
-            title,
-            content,
+          updatedPosts[oldPostIndex] = {
+            id: id,
+            title: title,
+            content: content,
             imagePath: response.imagePath,
           }
-          updatedPosts[oldPostIndex] = post
           this.posts = updatedPosts
-          this.postsUpdated.next([...this.posts])
-        })
+          this.postsUpdated.next([...this.posts])        })
   }
 
-  reloadUpdatedPost(post: Post, id: string): void {
+  reloadUpdatedPost(postData: Post, id: string): void {
     const updatedPosts: Post[] = [...this.posts];
     const oldPostIndex: number = updatedPosts.findIndex((p: Post): boolean => p.id === id)
-    updatedPosts[oldPostIndex] = post
+    updatedPosts[oldPostIndex] = {
+      id: postData.id,
+      title: postData.title,
+      content: postData.content,
+      imagePath: postData.imagePath,
+    }
     this.posts = updatedPosts
     this.postsUpdated.next([...this.posts])
   }
