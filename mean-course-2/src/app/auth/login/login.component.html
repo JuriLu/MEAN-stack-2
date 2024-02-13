@@ -1,0 +1,44 @@
+<p-toast></p-toast>
+@if (!isLoading) {
+  <div class="center">
+    <mat-card>
+
+      <form [formGroup]="form" (submit)="onSavePost()">
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            name="email"
+            [formControlName]="'email'"
+            [placeholder]="'Enter email'"
+            type="email">
+          <mat-error *ngIf="form.get('email')?.hasError('required')">{{ 'Email Required' }}</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">{{ 'Must be email of format: username@email.com ' }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>password</mat-label>
+          <input
+            matInput
+            name="Password"
+            [placeholder]="'Enter password'"
+            [formControlName]="'password'"
+            type="password"
+          >
+          <mat-error *ngIf="form.get('password')?.hasError('required')">{{ 'Password required' }}</mat-error>
+          <mat-error
+            *ngIf="form.get('password')?.hasError('minlength')">{{ 'Password must have at least 6 characters' }}
+          </mat-error>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+        >Login
+        </button>
+      </form>
+    </mat-card>
+  </div>
+} @else {
+  <mat-spinner></mat-spinner>
+}

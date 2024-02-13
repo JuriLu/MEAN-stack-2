@@ -24,7 +24,7 @@
           name="content"
         ></textarea>
         <mat-error *ngIf="form.get('content')?.hasError('required')">{{ 'Enter a post content' }}</mat-error>
-        <mat-error *ngIf="form.get('title')?.hasError('minlength')">{{ 'Minimum content length of 10 characters' }}</mat-error>
+        <mat-error *ngIf="form.get('content')?.hasError('minlength')">{{ 'Minimum content length of 10 characters' }}</mat-error>
       </mat-form-field>
       <div class="btnGroup">
         <button

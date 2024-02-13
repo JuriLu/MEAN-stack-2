@@ -28,13 +28,17 @@ import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {MatBadge} from "@angular/material/badge";
 import {MatPaginator} from "@angular/material/paginator";
+import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PostCreateComponent,
     HeaderComponent,
-    PostListComponent
+    PostListComponent,
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

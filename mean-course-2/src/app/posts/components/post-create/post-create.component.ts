@@ -39,7 +39,7 @@ export class PostCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.definingCreateOrEditMode()
-    this.definingForm()
+    this.defineForm()
     this.checkFileTypeOnChange()
   }
 
@@ -47,7 +47,7 @@ export class PostCreateComponent implements OnInit {
     return this.mode
   }
 
-  definingForm(): void {
+  defineForm(): void {
     this.form = new FormGroup<PostFormInterface>({
       title: new FormControl<string | null>(null, {
         validators: [Validators.required, Validators.minLength(5)]
