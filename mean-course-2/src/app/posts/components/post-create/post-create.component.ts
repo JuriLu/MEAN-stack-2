@@ -50,10 +50,10 @@ export class PostCreateComponent implements OnInit {
   definingForm(): void {
     this.form = new FormGroup<PostFormInterface>({
       title: new FormControl<string | null>(null, {
-        validators: [Validators.required, Validators.minLength(3)]
+        validators: [Validators.required, Validators.minLength(5)]
       }),
       content: new FormControl<string | null>(null, {
-        validators: [Validators.required]
+        validators: [Validators.required,Validators.minLength(10)]
       }),
       image: new FormControl<File | string | null>(null, {
         validators: [Validators.required],
@@ -89,6 +89,7 @@ export class PostCreateComponent implements OnInit {
 
   onSavePost(): void {
     if (this.form.invalid) {
+      console.log(this.form);
       return;
     }
     this.isLoading = true
@@ -123,7 +124,7 @@ export class PostCreateComponent implements OnInit {
       this.imagePreview = reader.result as string
       if (this.form.get('image')?.hasError('invalidMimeType')) {
         this.showError(
-          'Uploaded file is not image format !',
+          'Uploaded file is not image !',
           'Please upload a JPG,JPEG or PNG file.'
         )
         this.form.get('image')?.reset()

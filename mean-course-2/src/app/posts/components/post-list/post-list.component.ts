@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PostsService} from "../../services/posts.service";
 import {Subscription} from "rxjs";
 import {PostModel} from "../../models/post.model";
-import {PageEvent} from "@angular/material/paginator";
+import {MatPaginator, PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-post-list',
@@ -14,9 +14,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   private postsSub!: Subscription
   isLoading: boolean = false
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   //* Pagination Feature
-  totalPosts: number = 0
-  postPerPage: number = 10
+  totalPosts: number = 100
+  postPerPage: number = 5
   pageSizeOptions: number[] = [1, 2, 4, 10]
   currentPage: number = 1
 
@@ -35,10 +37,9 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   getPostsAndUpdate(): void {
     this.isLoading = true
-    this.postsService.getPosts(this.postPerPage, 1)
+    this.postsService.getPosts(this.postPerPage, this.currentPage)
     this.postsSub = this.postsService.getPostUpdateListener().subscribe(
       (postData: { posts: PostModel[], postCount: number }): void => {
-        console.log(postData.postCount)
         this.isLoading = false
         this.totalPosts = postData.postCount
         this.posts = postData.posts
@@ -56,7 +57,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onChangedPage(pageData: PageEvent): void {
-    this.isLoading = true
+
     this.currentPage = pageData.pageIndex + 1; //* Its index , it starts from 0
     this.postPerPage = pageData.pageSize;
     this.postsService.getPosts(this.postPerPage, this.currentPage)

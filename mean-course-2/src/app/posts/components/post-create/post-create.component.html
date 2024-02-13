@@ -10,7 +10,8 @@
           [formControlName]="'title'"
           [placeholder]="'Enter title'"
           type="text">
-        <mat-error *ngIf="form.get('title')?.invalid">{{ 'Enter a post title' }}</mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('required')">{{ 'Enter a post title' }}</mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('minlength')">{{ 'Minimum title length of 5 characters' }}</mat-error>
       </mat-form-field>
       <input type="file" #filePicker (change)="onImagePick($event)">
       <mat-form-field>
@@ -22,13 +23,13 @@
           rows="4"
           name="content"
         ></textarea>
-        <mat-error *ngIf="form.get('content')?.invalid">{{ 'Enter a post content' }}</mat-error>
+        <mat-error *ngIf="form.get('content')?.hasError('required')">{{ 'Enter a post content' }}</mat-error>
+        <mat-error *ngIf="form.get('title')?.hasError('minlength')">{{ 'Minimum content length of 10 characters' }}</mat-error>
       </mat-form-field>
       <div class="btnGroup">
         <button
           mat-raised-button
           color="accent"
-          [disabled]="form.invalid"
           type="submit"
         >Save Post
         </button>
