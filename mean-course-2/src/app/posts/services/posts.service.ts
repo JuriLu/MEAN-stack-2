@@ -1,46 +1,65 @@
 import {Injectable} from '@angular/core';
 import {Post} from "../interfaces/post.interface";
 import {map, Observable, Subject} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {PostResponseDto} from "../dto/postResponse.dto";
 import {PostModel} from "../models/post.model";
 
 const BASE_URI: string = 'http://localhost:3000'
 const POST_ENDPOINT: string = '/api/posts'
 
-interface ResponseModel {
+interface PostResponseModel {
   message: string,
   post: PostResponseDto
+}
+
+interface GetResponseModel {
+  message: string,
+  posts: PostResponseDto[],
+  maxPosts: number
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: PostModel[] = []
-  private postsUpdated: Subject<PostModel[]> = new Subject<PostModel[]>()
+  private postsUpdated: Subject<{ posts: PostModel[], postCount: number }> = new Subject<{
+    posts: PostModel[],
+    postCount: number
+  }>()
 
   constructor(
     private http: HttpClient
   ) {
   }
 
-  getPosts(): void {
-    this.http.get<PostResponseDto[]>(BASE_URI + POST_ENDPOINT)
+  getPosts(pageSize: number, page: number): void {
+    const options: { params: HttpParams } = {
+      params: new HttpParams()
+        .set('pageSize', pageSize)
+        .append('page', page)
+    }
+
+    this.http.get<GetResponseModel>(BASE_URI + POST_ENDPOINT, options)
       .pipe(
-        map((postsData: PostResponseDto[]) => {
-          return postsData.map((post: PostResponseDto): PostModel => {
-            return {
-              id: post._id as string,
-              title: post.title as string,
-              content: post.content as string,
-              image: post.imagePath
-            }
-          })
+        map((responseData: GetResponseModel): {
+          post: PostModel[], maxPosts: number
+        } => {
+          return {
+            post: responseData.posts.map((post: PostResponseDto): PostModel => {
+              return {
+                id: post._id as string,
+                title: post.title as string,
+                content: post.content as string,
+                image: post.imagePath
+              }
+            }),
+            maxPosts: responseData.maxPosts
+          }
         })
       )
-      .subscribe((postData: PostModel[]): void => {
-        this.postsUpdated.next([...postData])
+      .subscribe((transformedData: { post: PostModel[], maxPosts: number }): void => {
+        this.postsUpdated.next({posts: [...transformedData.post], postCount: transformedData.maxPosts})
       })
   }
 
@@ -54,19 +73,7 @@ export class PostsService {
     postData.append('content', content)
     postData.append('image', image, title)
 
-    this.http.post<ResponseModel>(BASE_URI + POST_ENDPOINT, postData).subscribe(
-      (responseData: ResponseModel): void => {
-        const post: PostModel = {
-          id: responseData.post._id,
-          title: responseData.post.title,
-          content: responseData.post.content,
-          image: responseData.post.imagePath
-        }
-        this.posts.push(post)
-        this.postsUpdated.next([...this.posts])
-      }
-    )
-
+    this.http.post<PostResponseModel>(BASE_URI + POST_ENDPOINT, postData).subscribe()
   }
 
   updatePost(
@@ -86,36 +93,15 @@ export class PostsService {
       postData = {id, title, content, imagePath: image}
     }
 
-    this.http.put<ResponseModel>(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
-      .subscribe(
-        (response: ResponseModel): void => {
-          this.reloadUpdatedPost(response.post, id)
-        })
+    this.http.put<PostResponseModel>(BASE_URI + POST_ENDPOINT + `/${id}`, postData)
+      .subscribe()
   }
 
-  reloadUpdatedPost(postResponseDto: PostResponseDto, id: string): void {
-    const toBeUpdatedPosts: PostModel[] = [...this.posts];
-    const oldPostIndex: number = toBeUpdatedPosts.findIndex((p: PostModel): boolean => p.id === id)
-    toBeUpdatedPosts[oldPostIndex] = {
-      id: postResponseDto._id,
-      title: postResponseDto.title,
-      content: postResponseDto.content,
-      image: postResponseDto.imagePath,
-    }
-    this.posts = toBeUpdatedPosts
-    this.postsUpdated.next([...this.posts])
+  deletePost(postId: string): Observable<any> {
+    return this.http.delete(BASE_URI + POST_ENDPOINT + `/${postId}`)
   }
 
-  deletePost(postId: string): void {
-    this.http.delete(BASE_URI + POST_ENDPOINT + `/${postId}`)
-      .subscribe((): void => {
-          this.posts = this.posts.filter((post: PostModel): boolean => post.id !== postId)
-          this.postsUpdated.next([...this.posts])
-        }
-      )
-  }
-
-  getPostUpdateListener(): Observable<PostModel[]> {
+  getPostUpdateListener(): Observable<{ posts: PostModel[], postCount: number }> {
     return this.postsUpdated.asObservable()
   }
 }

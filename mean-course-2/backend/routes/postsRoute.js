@@ -77,8 +77,27 @@ EXPRESS_APP_ROUTER.get('/:id', (request, response, next) => {
 
 //? GET
 EXPRESS_APP_ROUTER.get('', (request, response, next) => {
-  Post.find().then(documents => {
-    response.status(200).json(documents);
+  const pageSize = +request.query.pageSize
+  const currentPage = +request.query.page
+  const postQuery = Post.find();
+
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery.skip(pageSize * (currentPage - 1))//* postQuery.skip(10 * (2 - 1)) if we are showing 10 items and we are on  page 2 ,
+      //* we want to skip the first 10 items, and show the other 10 remaining which will be on page 2 (last page),
+      //* if we are in page 5 we want to skip the first 40 and show the 10 remaining which will be on page 5 (last page)
+      .limit(pageSize) //* Narrow down the amount of documents we retrieve for the current page (10) .limit(10) will return only 10 items
+  }
+  postQuery.then(documents => {
+    fetchedPosts = documents
+    return Post.countDocuments()
+  }).then(count => {
+    console.log(count)
+    response.status(200).json({
+      message: "Posts fetched successfully",
+      posts: fetchedPosts,
+      maxPosts: count
+    });
   })
 })
 

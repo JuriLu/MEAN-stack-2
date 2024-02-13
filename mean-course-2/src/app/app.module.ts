@@ -27,6 +27,7 @@ import {NgOptimizedImage} from "@angular/common";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {MatBadge} from "@angular/material/badge";
+import {MatPaginator} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import {MatBadge} from "@angular/material/badge";
     MatFabButton,
     NgOptimizedImage,
     ToastModule,
-    MatBadge
+    MatBadge,
+    MatPaginator
   ],
   providers: [
     provideAnimationsAsync(),
